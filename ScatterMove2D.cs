@@ -29,6 +29,7 @@ public class ScatterMove2D : MonoBehaviour
     public float showUi = 1f;
     public float playAudio = 1f;
     public float loadScene = 0f;
+    public float pauseOnDeath = 1f;
 
     private Collider2D col;
     private Rigidbody2D body;
@@ -112,6 +113,7 @@ public class ScatterMove2D : MonoBehaviour
     {
         if (dead) return;
         dead = true;
+        if (pauseOnDeath > 0.5f) Time.timeScale = 0f;
         if (showUi > 0.5f && uiToShow != null) uiToShow.SetActive(true);
         if (playAudio > 0.5f && audioToPlay != null) audioToPlay.Play();
         if (camsToTint != null && camsToTint.Length > 0) StartCoroutine(TintCams());
