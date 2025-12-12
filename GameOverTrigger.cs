@@ -9,6 +9,9 @@ public class GameOverTrigger : MonoBehaviour
     public Transform character;
     public Collider2D[] deadlyColliders;
     public Transform[] deadlyTargets;
+    public Camera[] camsToTint;
+    public Color tintColor = Color.red;
+    public float tintTime = 1f;
     public GameObject uiToShow;
     public AudioSource audioToPlay;
     public string sceneName = "";
@@ -58,7 +61,33 @@ public class GameOverTrigger : MonoBehaviour
     {
         if (showUi > 0.5f && uiToShow != null) uiToShow.SetActive(true);
         if (playAudio > 0.5f && audioToPlay != null) audioToPlay.Play();
+        if (camsToTint != null && camsToTint.Length > 0) StartCoroutine(TintCams());
         if (loadScene > 0.5f && !string.IsNullOrEmpty(sceneName)) SceneManager.LoadScene(sceneName);
+    }
+
+    System.Collections.IEnumerator TintCams()
+    {
+        int len = camsToTint.Length;
+        Color[] originals = new Color[len];
+        for (int i = 0; i < len; i++)
+        {
+            var c = camsToTint[i];
+            if (c == null) continue;
+            originals[i] = c.backgroundColor;
+            c.backgroundColor = tintColor;
+        }
+        float t = 0f;
+        while (t < tintTime)
+        {
+            t += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        for (int i = 0; i < len; i++)
+        {
+            var c = camsToTint[i];
+            if (c == null) continue;
+            c.backgroundColor = originals[i];
+        }
     }
 }
 
