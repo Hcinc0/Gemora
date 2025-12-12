@@ -46,7 +46,6 @@ public class ScatterMove2D : MonoBehaviour
     private bool grounded;
     private float x;
     private bool dead;
-    private float baseScaleX;
 
     void Awake()
     {
@@ -54,7 +53,6 @@ public class ScatterMove2D : MonoBehaviour
         col = GetComponent<Collider2D>();
         body.constraints = RigidbodyConstraints2D.FreezeRotation;
         body.gravityScale = gravityScale;
-        baseScaleX = transform.localScale.x == 0 ? 1f : transform.localScale.x;
     }
 
     void Update()
@@ -62,13 +60,6 @@ public class ScatterMove2D : MonoBehaviour
         if (dead) return;
         transform.rotation = Quaternion.identity;
         x = Input.GetAxisRaw("Horizontal");
-        float dir = x > 0.01f ? 1f : x < -0.01f ? -1f : 0f;
-        if (dir != 0f)
-        {
-            Vector3 s = transform.localScale;
-            s.x = Mathf.Abs(baseScaleX) * dir;
-            transform.localScale = s;
-        }
 
         Vector2 p = groundProbe != null ? (Vector2)groundProbe.position : body.position;
         grounded = Physics2D.OverlapCircle(p, probeRadius, groundMask);
