@@ -30,6 +30,11 @@ public class ScatterMove2D : MonoBehaviour
     public float playAudio = 1f;
     public float loadScene = 0f;
     public float pauseOnDeath = 1f;
+    public Collider2D[] winColliders;
+    public Transform[] winTargets;
+    public float winRadius = 0.5f;
+    public string winSceneName = "";
+    public float loadWinScene = 0f;
 
     private Collider2D col;
     private Rigidbody2D body;
@@ -83,6 +88,23 @@ public class ScatterMove2D : MonoBehaviour
                 }
             }
         }
+
+        if (!dead)
+        {
+            if (winTargets != null && winTargets.Length > 0 && col != null)
+            {
+                for (int i = 0; i < winTargets.Length; i++)
+                {
+                    var t = winTargets[i];
+                    if (t == null) continue;
+                    if (Vector2.Distance(t.position, col.bounds.center) <= winRadius)
+                    {
+                        Win();
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     void FixedUpdate()
@@ -114,6 +136,18 @@ public class ScatterMove2D : MonoBehaviour
             {
                 Go();
                 return;
+            }
+        }
+
+        if (winColliders != null)
+        {
+            for (int i = 0; i < winColliders.Length; i++)
+            {
+                if (winColliders[i] == colHit)
+                {
+                    Win();
+                    return;
+                }
             }
         }
     }
@@ -154,6 +188,11 @@ public class ScatterMove2D : MonoBehaviour
             if (c == null) continue;
             c.backgroundColor = originals[i];
         }
+    }
+
+    void Win()
+    {
+        if (loadWinScene > 0.5f && !string.IsNullOrEmpty(winSceneName)) SceneManager.LoadScene(winSceneName);
     }
 }
 
