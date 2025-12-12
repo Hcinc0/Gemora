@@ -35,6 +35,11 @@ public class ScatterMove2D : MonoBehaviour
     public float winRadius = 0.5f;
     public string winSceneName = "";
     public float loadWinScene = 0f;
+    public Camera[] winCamsToTint;
+    public Color winTintColor = Color.black;
+    public float winTintTime = 1f;
+    public AudioSource audioWin;
+    public float playAudioWin = 1f;
 
     private Collider2D col;
     private Rigidbody2D body;
@@ -192,7 +197,34 @@ public class ScatterMove2D : MonoBehaviour
 
     void Win()
     {
+        if (playAudioWin > 0.5f && audioWin != null) audioWin.Play();
+        if (winCamsToTint != null && winCamsToTint.Length > 0) StartCoroutine(WinTint());
         if (loadWinScene > 0.5f && !string.IsNullOrEmpty(winSceneName)) SceneManager.LoadScene(winSceneName);
+    }
+
+    IEnumerator WinTint()
+    {
+        int len = winCamsToTint.Length;
+        Color[] originals = new Color[len];
+        for (int i = 0; i < len; i++)
+        {
+            var c = winCamsToTint[i];
+            if (c == null) continue;
+            originals[i] = c.backgroundColor;
+            c.backgroundColor = winTintColor;
+        }
+        float t = 0f;
+        while (t < winTintTime)
+        {
+            t += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        for (int i = 0; i < len; i++)
+        {
+            var c = winCamsToTint[i];
+            if (c == null) continue;
+            c.backgroundColor = originals[i];
+        }
     }
 }
 
