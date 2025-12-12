@@ -1,4 +1,5 @@
 using System.Collections;
+222
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -156,4 +157,5 @@ public class ScatterMove2D : MonoBehaviour
         }
     }
 }
+
 
